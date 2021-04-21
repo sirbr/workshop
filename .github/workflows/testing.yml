@@ -23,6 +23,7 @@ jobs:
 
       - name: push Docker image
         run: |
-          docker build -t ${REPO}:STG-${GITHUB_SHA:1:7} .
+          docker build -f Dockerfile \
+            -t ${REPO}:STG-${GITHUB_SHA:1:7} .
           docker tag ${REPO}:STG-${GITHUB_SHA:1:7} ${REPO}:master
           docker push ${REPO}:master
