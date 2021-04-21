@@ -1,0 +1,30 @@
+on:
+  - push
+
+name: CI-CD TESTING
+
+jobs:
+  deploy:
+    name: Push image
+    runs-on: ubuntu-18.04
+    env:
+      REPO: ${{ secrets.ECR_REGISTRY_URL }}/
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+     - name: Configure AWS ECR credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ECR_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ECR_ACCESS_KEY_SECRET }}
+          aws-region: us-east-1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: push Docker image
+        run: |
+          docker build -f Dockerfile \
+            -t FGH-demo .
+          docker tag FGH-demo ${REPO}:v1
+          docker push ${REPO}FGH-demo:v1
