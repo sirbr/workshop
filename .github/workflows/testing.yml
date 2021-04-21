@@ -8,7 +8,8 @@ jobs:
     name: Push image
     runs-on: ubuntu-18.04
     env:
-      REPO: ${{ secrets.ECR_REGISTRY_URL }}/
+      API_IMAGE_TAG: ${GITHUB_SHA:1:7}
+      REPO: ${{ secrets.ECR_REGISTRY_URL }}/${{ secrets.REPOSITORY }}
     steps:
       - name: Configure AWS ECR credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -23,6 +24,6 @@ jobs:
       - name: push Docker image
         run: |
           docker build -f Dockerfile \
-            -t FGH-demo .
-          docker tag FGH-demo ${REPO}:v1
-          docker push ${REPO}FGH-demo:v1
+            -t ${REPO}:STG-${GITHUB_SHA:1:7} .
+          docker tag ${REPO}:STG-${GITHUB_SHA:1:7} ${REPO}:master
+          docker push ${REPO}:master
